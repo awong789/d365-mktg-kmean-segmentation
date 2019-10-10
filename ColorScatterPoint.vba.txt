@@ -1,0 +1,51 @@
+Option Explicit
+Sub ColorScatterPoints()
+    Dim cht As Chart
+    Dim srs As Series
+    Dim pt As Point
+    Dim p As Long
+    Dim Vals$, lTrim#, rTrim#
+    Dim valRange As Range, cl As Range
+    Dim myColor As Long
+
+    Set cht = ActiveSheet.ChartObjects(1).Chart
+    Set srs = cht.SeriesCollection(1)
+
+   '## Get the series Y-Values range address:
+    lTrim = InStrRev(srs.Formula, ",", InStrRev(srs.Formula, ",") - 1, vbBinaryCompare) + 1
+    rTrim = InStrRev(srs.Formula, ",")
+    Vals = Mid(srs.Formula, lTrim, rTrim - lTrim)
+    Set valRange = Range(Vals)
+
+    For p = 1 To srs.Points.Count
+        Set pt = srs.Points(p)
+        Set cl = valRange(p).Offset(0, 1) '## assume color is in the next column.
+
+        With pt
+            .Format.Fill.Visible = msoTrue
+            '.Solid  'I commented this out, but you can un-comment and it should still work
+            '## Assign Long color value based on the cell value
+            '## Add additional cases as needed.
+            Select Case LCase(cl)
+                Case "0"
+                    myColor = RGB(255, 0, 0)
+                Case "1"
+                    myColor = RGB(0, 0, 255)
+                Case "2"
+                    myColor = RGB(0, 255, 0)
+                Case "3"
+                    myColor = RGB(179, 133, 96)
+                Case "4"
+                    myColor = RGB(238, 130, 238)
+            End Select
+
+            .Format.Fill.ForeColor.RGB = myColor
+            .MarkerForegroundColor = myColor
+            .MarkerSize = 5
+        End With
+    Next
+
+
+End Sub
+
+
